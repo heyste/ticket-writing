@@ -1,0 +1,121 @@
+# -*- ii: apisnoop; -*-
+#+TITLE: Write CoreV1LimitRange Test - +3
+#+AUTHOR: ii team
+#+TODO: TODO(t) NEXT(n) IN-PROGRESS(i) BLOCKED(b) | DONE(d)
+#+OPTIONS: toc:nil tags:nil todo:nil
+#+EXPORT_SELECT_TAGS: export
+#+PROPERTY: header-args:sql-mode :product postgres
+
+
+* TODO Progress [0/6]                                                :export:
+- [ ] APISnoop org-flow: [[https://github.com/apisnoop/ticket-writing][.org]]
+- [ ] Test approval issue: [[https://issues.k8s.io/][#]]
+- [ ] Test PR: [[https://pr.k8s.io/][#]]
+- [ ] Two weeks soak start date: [[https://testgrid.k8s.io/][testgrid-link]]
+- [ ] Two weeks soak end date:
+- [ ] Test promotion PR: [[https://pr.k8s.io/][#]]
+
+* Identifying an untested feature Using APISnoop                     :export:
+
+According to this APIsnoop query, there are still three remaining LimitRange endpoints which are untested.
+
+  #+NAME: untested_stable_core_endpoints
+  #+begin_src sql-mode :eval never-export :exports both :session none
+    SELECT
+      endpoint,
+      path,
+      kind
+      FROM testing.untested_stable_endpoint
+      where eligible is true
+      and endpoint ilike '%LimitRange%'
+      order by kind, endpoint desc
+      limit 10;
+  #+end_src
+
+  #+RESULTS: untested_stable_core_endpoints
+  #+begin_SRC example
+                    endpoint                  |                       path                        |    kind
+  --------------------------------------------+---------------------------------------------------+------------
+   patchCoreV1NamespacedLimitRange            | /api/v1/namespaces/{namespace}/limitranges/{name} | LimitRange
+   listCoreV1LimitRangeForAllNamespaces       | /api/v1/limitranges                               | LimitRange
+   deleteCoreV1CollectionNamespacedLimitRange | /api/v1/namespaces/{namespace}/limitranges        | LimitRange
+  (3 rows)
+
+  #+end_SRC
+
+* API Reference and feature documentation                            :export:
+
+- [[https://kubernetes.io/docs/reference/kubernetes-api/][Kubernetes API Reference Docs]]
+- [[https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/limit-range-v1/][Kubernetes API / Policy Resource / LimitRange]]
+- [[https://github.com/kubernetes/client-go/blob/master/kubernetes/typed/core/v1/limitrange.go][client-go - LimitRange]]
+
+* Test outline :export:
+
+#+begin_src
+Feature: Test list, patch and deleteCollection LimitRange api endpoints
+#+end_src
+
+- listCoreV1LimitRangeForAllNamespaces
+
+#+begin_src
+
+#+end_src
+
+- patchCoreV1NamespacedLimitRange
+
+#+begin_src
+
+#+end_src
+
+- deleteCoreV1CollectionNamespacedLimitRange
+
+#+begin_src
+
+#+end_src
+
+* E2E Test :export:
+
+Using a number of existing e2e test practices a new [[https://github.com/ii/kubernetes][ginkgo test]] has been created for 3 ResourceQuota Status endpoints.
+The e2e logs for this test are listed below.
+
+#+begin_src
+
+#+end_src
+
+* Verifying increase in coverage with APISnoop                       :export:
+** Listing endpoints hit by the new e2e test
+
+This query shows which LimitRange endpoints are hit within a short period of running this e2e test
+
+#+begin_src sql-mode :eval never-export :exports both :session none
+select distinct  endpoint, right(useragent,33) AS useragent
+from testing.audit_event
+where endpoint ilike '%LimitRange%'
+and release_date::BIGINT > round(((EXTRACT(EPOCH FROM NOW()))::numeric)*1000,0) - 60000
+-- and useragent like 'e2e%should%'
+and useragent like 'e2e%kb239%'
+order by endpoint
+limit 10;
+#+end_src
+
+#+RESULTS:
+#+begin_SRC example
+               endpoint               |             useragent
+--------------------------------------+-----------------------------------
+ listCoreV1LimitRangeForAllNamespaces | [sig-scheduling] LimitRange kb239
+(1 row)
+
+#+end_SRC
+
+* Final notes                                                        :export:
+
+If a test with these calls gets merged, *test coverage will go up by 3 point*
+
+This test is also created with the goal of conformance promotion.
+
+-----
+/sig testing
+
+/sig architecture
+
+/area conformance
