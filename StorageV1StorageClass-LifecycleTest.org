@@ -64,6 +64,43 @@ limit    10;
 
 #+begin_src
 Scenario: Test the lifecycle of a StorageClass
+
+  Given the e2e test has created the settings for a StorageClass
+  When the test creates the StorageClass
+  Then the requested action is accepted without any error
+
+  Given the e2e test has created the StorageClass
+  When the test reads the StorageClass
+  Then the requested action is accepted without any error
+
+  Given the e2e test has retrived a StorageClass
+  When the test patches the StorageClass with a new label
+  Then the requested action is accepted without any error
+  And the test finds the new StorageClass label with the required "patched" value
+
+  Given the e2e test has patched the StorageClass
+  When the test deletes the StorageClass
+  Then the requested action is accepted without any error
+  And the deletion of the StorageClass is confirmed
+
+  Given the e2e test has no StorageClass
+  When the test recreates a new StorageClass
+  Then the requested action is accepted without any error
+
+  Given the e2e test has created a StorageClass
+  When the test updates the StorageClass label
+  Then the requested action is accepted without any error
+  And the test finds the StorageClass label with the required "updated" value
+
+  Given the e2e test has created a LabelSelector for the StorageClass
+  When the test lists the StorageClasses with a labelSelector
+  Then the requested action is accepted without any error
+  And the retrieved list has a single item
+
+  Given the e2e test has updated a StorageClass
+  When the test applies the deleteCollection action with a labelSelector
+  Then the requested action is accepted without any error
+  And the StorageClass with the label is not found
 #+end_src
 
 * E2E Test                                                           :export:
