@@ -68,11 +68,29 @@ Scenario: Test the lifecycle of a StorageClass
 
 * E2E Test                                                           :export:
 
-Using a number of existing e2e test practices a new [[https://github.com/ii/kubernetes][ginkgo test]] has been created to provide future Conformance coverage for the _ endpoints.
+Using a number of existing e2e test practices a new [[https://github.com/ii/kubernetes/blob/create-storageclass-lifecycle-test/test/e2e/storage/storageclass.go#L43-L159][ginkgo test]] has been created to provide future Conformance coverage for the 7 endpoints.
 The e2e logs for this test are listed below.
 
 #+begin_src
-
+[sig-storage] StorageClasses CSI Conformance should run through the lifecycle of a StorageClass
+/home/ii/go/src/k8s.io/kubernetes/test/e2e/storage/storageclass.go:43
+  STEP: Creating a kubernetes client @ 09/05/23 23:48:05.729
+  Sep  5 23:48:05.729: INFO: >>> kubeConfig: /home/ii/.kube/config
+  STEP: Building a namespace api object, basename csi-storageclass @ 09/05/23 23:48:05.736
+  STEP: Waiting for a default service account to be provisioned in namespace @ 09/05/23 23:48:05.758
+  STEP: Waiting for kube-root-ca.crt to be provisioned in namespace @ 09/05/23 23:48:05.765
+  STEP: Creating a StorageClass @ 09/05/23 23:48:05.772
+  STEP: Get StorageClass "e2e-64xnx" @ 09/05/23 23:48:05.778
+  STEP: Patching the StorageClass "e2e-64xnx" @ 09/05/23 23:48:05.783
+  STEP: Delete StorageClass "e2e-64xnx" @ 09/05/23 23:48:05.79
+  STEP: Confirm deletion of StorageClass "e2e-64xnx" @ 09/05/23 23:48:05.796
+  STEP: Create a replacement StorageClass @ 09/05/23 23:48:05.801
+  STEP: Updating StorageClass "e2e-v2-bg6gz" @ 09/05/23 23:48:05.806
+  STEP: Listing all StorageClass with the labelSelector: "e2e-v2-bg6gz=updated" @ 09/05/23 23:48:05.817
+  STEP: Deleting StorageClass "e2e-v2-bg6gz" via DeleteCollection @ 09/05/23 23:48:05.822
+  STEP: Confirm deletion of StorageClass "e2e-v2-bg6gz" @ 09/05/23 23:48:05.83
+  Sep  5 23:48:05.834: INFO: Waiting up to 7m0s for all (but 0) nodes to be ready
+  STEP: Destroying namespace "csi-storageclass-7858" for this suite. @ 09/05/23 23:48:05.841
 #+end_src
 
 * Verifying increase in coverage with APISnoop                       :export:
@@ -91,9 +109,24 @@ order by endpoint
 limit 10;
 #+end_src
 
-* Final notes                                                        :export:
+#+RESULTS:
+#+begin_SRC example
+               endpoint                |                     useragent
+---------------------------------------+----------------------------------------------------
+ createStorageV1StorageClass           | should run through the lifecycle of a StorageClass
+ deleteStorageV1CollectionStorageClass | should run through the lifecycle of a StorageClass
+ deleteStorageV1StorageClass           | should run through the lifecycle of a StorageClass
+ listStorageV1StorageClass             | should run through the lifecycle of a StorageClass
+ patchStorageV1StorageClass            | should run through the lifecycle of a StorageClass
+ readStorageV1StorageClass             | should run through the lifecycle of a StorageClass
+ replaceStorageV1StorageClass          | should run through the lifecycle of a StorageClass
+(7 rows)
 
-If a test with these calls gets merged, *test coverage will go up by _ points*
+#+end_SRC
+
+* Final notes                                                           :export:
+
+If a test with these calls gets merged, *test coverage will go up by 7 points*
 
 This test is also created with the goal of conformance promotion.
 
