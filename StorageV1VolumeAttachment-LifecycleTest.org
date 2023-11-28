@@ -67,6 +67,54 @@ limit    10;
 
 #+begin_src
 Scenario: Test the lifecycle of a VolumeAttachment
+
+  Given the e2e test has created the settings for a VolumeAttachment
+  When the test creates the VolumeAttachment
+  Then the requested action is accepted without any error
+  And the test confirms the name of the created VolumeAttachment
+
+  Given the e2e test has created a VolumeAttachment
+  When the test reads the VolumeAttachment
+  Then the requested action is accepted without any error
+  And the test confirms the name of the read VolumeAttachment
+
+  Given the e2e test has read a VolumeAttachment
+  When the test patches the VolumeAttachment with a label
+  Then the requested action is accepted without any error
+  And the test confirms that the "patched" label is found
+
+  Given the e2e test has patched a VolumeAttachment and created a "patched" LabelSelector
+  When the test lists the VolumeAttachment with a "patched" labelSelector
+  Then the requested action is accepted without any error
+  And the retrieved list has a single item
+
+  Given the e2e test has listed the VolumeAttachment
+  When the test deletes the VolumeAttachment
+  Then the requested action is accepted without any error
+
+  Given the e2e test has deleted the VolumeAttachment
+  When the test lists for the VolumeAttachment with a "patched" labelSelector
+  Then the requested action is accepted without any error
+  And the deletion of the VolumeAttachment is confirmed
+
+  Given the e2e test has no VolumeAttachment
+  When the test recreates a new VolumeAttachment
+  Then the requested action is accepted without any error
+
+  Given the e2e test has created a replacement VolumeAttachment
+  When the test updates the VolumeAttachment with a label
+  Then the requested action is accepted without any error
+  And the test confirms that the "updated" label is found
+
+  Given the e2e test has created a "updated" LabelSelector for the VolumeAttachment
+  When the test applies the deleteCollection action with a "updated" labelSelector
+  Then the requested action is accepted without any error
+
+  Given the e2e test has deleted the VolumeAttachment
+  When the test lists for the VolumeAttachment with a "updated" labelSelector
+  Then the requested action is accepted without any error
+  And the deletion of the VolumeAttachment is confirmed
+
 #+end_src
 
 * E2E Test                                                           :export:
